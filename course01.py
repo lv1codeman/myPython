@@ -76,14 +76,12 @@ try:
     # 搜尋到的資料筆數 = row的大小
     row = len(results_row)
     # 建立放output的陣列
-    output = [[0] * 18 for i in range(row)]
+    output = [[0] * 19 for i in range(row)]
 
     results = results.select("tbody td")
 
     i = 0
     unit = ""  # 開課單位
-
-    breaki = 0
 
     for result in results:
         if result.get("data-th") == "課程代碼：":
@@ -92,68 +90,78 @@ try:
             output[i][1] = result.get_text()
             unit = result.get_text()
         elif result.get("data-th") == "課程名稱：":
-            output[i][2] = re.sub(r"\s+", "", result.get_text())
+            course_name_all = result.text.split("\n")
+            course_name_list = list()
+            for ele in course_name_all:
+                if len(ele.strip()) >= 2:
+                    course_name_list.append(ele.strip())
+            if len(course_name_list) > 1:
+                output[i][2] = course_name_list[0]
+                output[i][3] = course_name_list[1]
+            else:
+                output[i][2] = course_name_list[0]
+                output[i][3] = ""
         elif result.get("data-th") == "教學大綱：":
-            if (("無檔案" in result.text) & ("No file" in result.text)):
-                output[i][3] = "無檔案"
-                output[i][4] = "No file"
+            if ("無檔案" in result.text) & ("No file" in result.text):
+                output[i][4] = "無檔案"
+                output[i][5] = "No file"
             elif ("無檔案" in result.text) & (not "No file" in result.text):
                 cht_syllabus = "無檔案"
                 eng_syllabus = result.find("a").text.strip()
-                output[i][3] = cht_syllabus
-                output[i][4] = eng_syllabus
+                output[i][4] = cht_syllabus
+                output[i][5] = eng_syllabus
             elif not ("No file" in result.text) & (not "無檔案" in result.text):
                 cht_syllabus = result.find("a").text.strip()
                 eng_syllabus = "No file"
-                output[i][3] = cht_syllabus
-                output[i][4] = eng_syllabus
+                output[i][4] = cht_syllabus
+                output[i][5] = eng_syllabus
             else:
                 cht_syllabus = result.find("a").text.strip()
                 eng_syllabus = result.find(
-                    "a").next_sibling.next_sibling.next_sibling.strip()
-                output[i][3] = cht_syllabus
-                output[i][4] = eng_syllabus
+                    "a"
+                ).next_sibling.next_sibling.next_sibling.strip()
+                output[i][4] = cht_syllabus
+                output[i][5] = eng_syllabus
         elif result.get("data-th") == "課程性質：":
-            output[i][5] = result.get_text()
-        elif result.get("data-th") == "課程性質2：":
             output[i][6] = result.get_text()
-        elif result.get("data-th") == "全英語授課：":
+        elif result.get("data-th") == "課程性質2：":
             output[i][7] = result.get_text()
-        elif result.get("data-th") == "學分：":
+        elif result.get("data-th") == "全英語授課：":
             output[i][8] = result.get_text()
+        elif result.get("data-th") == "學分：":
+            output[i][9] = result.get_text()
         elif result.get("data-th") == "教師姓名：":
             teacher_list = list()
             teachers = result.find_all("span")
             for teacher in teachers:
                 teacher_list.append(teacher.get_text())
             teachers = ",".join(str(element) for element in teacher_list)
-            output[i][9] = teachers.strip()
+            output[i][10] = teachers.strip()
         elif result.get("data-th") == "上課大樓：":
-            output[i][10] = result.get_text()
-        elif result.get("data-th") == "上課節次+地點：":
             output[i][11] = result.get_text()
-        elif result.get("data-th") == "上限人數：":
+        elif result.get("data-th") == "上課節次+地點：":
             output[i][12] = result.get_text()
+        elif result.get("data-th") == "上限人數：":
+            output[i][13] = result.get_text()
         elif result.get("data-th") == "登記人數：":
-            output[i][13] = re.sub(r"\s+", "", result.get_text())
+            output[i][14] = re.sub(r"\s+", "", result.get_text())
         elif result.get("data-th") == "選上人數：":
-            output[i][14] = result.get_text()
+            output[i][15] = result.get_text()
             if int(result.get_text()) < 10:
                 if ("碩" in unit) & (int(result.get_text()) >= 3):
-                    output[i][17] = "Y"
+                    output[i][18] = "Y"
                 elif (
-                    ("博" in unit) & ("碩" not in unit) & (
-                        int(result.get_text()) >= 1)
+                    ("博" in unit) & ("碩" not in unit) & (int(result.get_text()) >= 1)
                 ):
-                    output[i][17] = "Y"
+                    output[i][18] = "Y"
                 else:
-                    output[i][17] = "N"
+                    output[i][18] = "N"
             else:
-                output[i][17] = "Y"
+                output[i][18] = "Y"
         elif result.get("data-th") == "可跨班：":
-            output[i][15] = result.get_text()
+            output[i][16] = result.get_text()
         elif result.get("data-th") == "備註：":
-            output[i][16] = result.get_text().strip()
+            output[i][17] = result.get_text().strip()
             i = i + 1
 
     print("Done!")
@@ -170,11 +178,11 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
 
     # 寫入一列資料
     writer.writerow(
-        # ["開課班別", "課程代碼", "課程名稱", "授課教師", "選上人數", "符合開課標準", "可跨班", "備註"]
         [
             "課程代碼",
             "開課班別(代表)",
-            "課程名稱",
+            "課程名稱(中)",
+            "課程名稱(英)",
             "教學大綱(中)",
             "教學大綱(英)",
             "課程性質",
@@ -189,7 +197,7 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
             "選上人數",
             "可跨班",
             "備註",
-            "符合開課標準"
+            "符合開課標準",
         ]
     )
 
@@ -215,9 +223,9 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
                 output[i][15],
                 output[i][16],
                 output[i][17],
+                output[i][18],
             ]
         )
-
     # 關閉檔案
     csvfile.close()
 
