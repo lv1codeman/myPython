@@ -9,7 +9,8 @@
 
 # 載入需要的套件
 import pandas as pd
-import requests
+
+# import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
