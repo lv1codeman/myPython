@@ -16,8 +16,8 @@
 ```
   python course01.py
 ```
-4. 資料夾內的1122_course01.csv即為結果(檔名開頭為當前學年度學期)
-
+4. 資料夾內的1122_course01.csv即為結果
+> [!TIP] 檔名開頭為當前學年度學期
 # Useful vscode extensions
 - Text Pastry  
   Generate increment numbers.
