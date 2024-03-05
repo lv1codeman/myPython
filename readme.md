@@ -9,11 +9,17 @@
 2. 開啟vscode terminal安裝使用到的模組
 ```
   pip install pandas
+```
+```
   pip install selenium
+```
+```
   pip install BeautifulSoup4
 ```
-3. 執行程式
-```python course01.py```
+3. 執行程式  
+```
+python course01.py
+```
 4. 資料夾內的1122_course01.csv即為結果
 > [!Note] 
 > 檔名開頭為當前學年度學期
