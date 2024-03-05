@@ -13,11 +13,9 @@
   pip install BeautifulSoup4
 ```
 3. 執行程式
-```
-  python course01.py
-```
+```python course01.py```
 4. 資料夾內的1122_course01.csv即為結果
-> [!TIP] 
+> [!Note] 
 > 檔名開頭為當前學年度學期
 # Useful vscode extensions
 - Text Pastry  
@@ -26,3 +24,4 @@
   python formatter
 - Python  
   python language highlight
+  
