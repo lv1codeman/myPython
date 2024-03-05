@@ -8,13 +8,13 @@
   安裝時勾選add Python to PATH
 2. 開啟vscode terminal安裝使用到的模組
 ```
-  pip install pandas
+pip install pandas
 ```
 ```
-  pip install selenium
+pip install selenium
 ```
 ```
-  pip install BeautifulSoup4
+pip install BeautifulSoup4
 ```
 3. 執行程式  
 ```
