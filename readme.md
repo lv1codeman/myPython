@@ -20,7 +20,8 @@ pip install BeautifulSoup4
 ```
 python course01.py
 ```
-4. 資料夾內的1122_course01.csv即為結果
+4. 資料夾內的1122_course01.csv即為結果  
+  新增輸出：開課查詢_[date].xlsx
 > [!Note] 
 > 檔名開頭為當前學年度學期
 # Useful vscode extensions

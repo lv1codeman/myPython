@@ -165,7 +165,7 @@ try:
             output[i][17] = result.get_text().strip()
             i = i + 1
 
-    print("Done!")
+
 except TimeoutException:
     print("Loading took too much time!")
 
@@ -229,6 +229,27 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
         )
     # 關閉檔案
     csvfile.close()
+
+import openpyxl
+
+csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
+raw_data = csv.reader(csvfile)  # 讀取 CSV 檔案
+data = list(raw_data)  # 轉換成二維串列
+
+wb = openpyxl.Workbook()  # 建立空白的 Excel 活頁簿物件
+# sheet = wb.create_sheet("csv")  # 建立空白的工作表
+s1 = wb["Sheet"]
+for i in data:
+    s1.append(i)  # 逐筆添加到最後一列
+
+from datetime import datetime
+
+s1.title = year + "-" + semester + "開課查詢"
+wb.save("開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx")
+print("done")
+
+# 自適應欄寬
+# https://blog.csdn.net/qq_33704787/article/details/124722917
 
 # 做vlookup查出系所和承辦人
 
