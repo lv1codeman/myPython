@@ -1,4 +1,5 @@
 *.xlsx
 *.png
-./build/*
-./dist/*
+*.spec
+build/*
+dist/*
