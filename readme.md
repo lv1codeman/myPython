@@ -1,5 +1,5 @@
 # Introduction
-利用selenium爬蟲開課查詢的結果，透過BeautifulSoup4解析後存入.csv檔案
+利用selenium爬蟲開課查詢的結果，透過BeautifulSoup4解析後存入.csv檔案，再將.csv檔轉存為.xlsx檔。
 # Feature
 1. 將課程名稱中英文、教學大綱分開存在不同欄位
 2. 授課教師欄位以逗號分隔
@@ -34,7 +34,8 @@ python course01.py
 - Python  
   python language highlight
   
-## 使用pyinstaller打包成執行檔
+## 使用pyinstaller打包成.exe執行檔
+[參考文件](https://medium.com/pyladies-taiwan/python-%E5%B0%87python%E6%89%93%E5%8C%85%E6%88%90exe%E6%AA%94-32a4bacbe351)
 1. 安裝pyinstaller
 ```
 pip install pyinstaller
