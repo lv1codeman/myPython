@@ -8,8 +8,10 @@
 # print(result)
 
 # 載入需要的套件
+from datetime import datetime
+import openpyxl
 import pandas as pd
-
+import os
 # import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -77,7 +79,7 @@ try:
     # 搜尋到的資料筆數 = row的大小
     row = len(results_row)
     # 建立放output的陣列
-    output = [[0] * 19 for i in range(row)]
+    output = [[0] * 20 for i in range(row)]
 
     results = results.select("tbody td")
 
@@ -106,63 +108,67 @@ try:
             if ("無檔案" in result.text) & ("No file" in result.text):
                 output[i][4] = "無檔案"
                 output[i][5] = "No file"
-            elif ("無檔案" in result.text) & (not "No file" in result.text):
-                cht_syllabus = "無檔案"
-                eng_syllabus = result.find("a").text.strip()
-                output[i][4] = cht_syllabus
-                output[i][5] = eng_syllabus
-            elif not ("No file" in result.text) & (not "無檔案" in result.text):
-                cht_syllabus = result.find("a").text.strip()
-                eng_syllabus = "No file"
-                output[i][4] = cht_syllabus
-                output[i][5] = eng_syllabus
+                output[i][6] = "Y"
             else:
-                cht_syllabus = result.find("a").text.strip()
-                eng_syllabus = result.find(
-                    "a"
-                ).next_sibling.next_sibling.next_sibling.strip()
-                output[i][4] = cht_syllabus
-                output[i][5] = eng_syllabus
+                output[i][6] = "N"
+                if ("無檔案" in result.text) & (not "No file" in result.text):
+                    cht_syllabus = "無檔案"
+                    eng_syllabus = result.find("a").text.strip()
+                    output[i][4] = cht_syllabus
+                    output[i][5] = eng_syllabus
+                elif not ("No file" in result.text) & (not "無檔案" in result.text):
+                    cht_syllabus = result.find("a").text.strip()
+                    eng_syllabus = "No file"
+                    output[i][4] = cht_syllabus
+                    output[i][5] = eng_syllabus
+                else:
+                    cht_syllabus = result.find("a").text.strip()
+                    eng_syllabus = result.find(
+                        "a"
+                    ).next_sibling.next_sibling.next_sibling.strip()
+                    output[i][4] = cht_syllabus
+                    output[i][5] = eng_syllabus
         elif result.get("data-th") == "課程性質：":
-            output[i][6] = result.get_text()
-        elif result.get("data-th") == "課程性質2：":
             output[i][7] = result.get_text()
-        elif result.get("data-th") == "全英語授課：":
+        elif result.get("data-th") == "課程性質2：":
             output[i][8] = result.get_text()
-        elif result.get("data-th") == "學分：":
+        elif result.get("data-th") == "全英語授課：":
             output[i][9] = result.get_text()
+        elif result.get("data-th") == "學分：":
+            output[i][10] = result.get_text()
         elif result.get("data-th") == "教師姓名：":
             teacher_list = list()
             teachers = result.find_all("span")
             for teacher in teachers:
                 teacher_list.append(teacher.get_text())
             teachers = ",".join(str(element) for element in teacher_list)
-            output[i][10] = teachers.strip()
+            output[i][11] = teachers.strip()
         elif result.get("data-th") == "上課大樓：":
-            output[i][11] = result.get_text()
-        elif result.get("data-th") == "上課節次+地點：":
             output[i][12] = result.get_text()
-        elif result.get("data-th") == "上限人數：":
+        elif result.get("data-th") == "上課節次+地點：":
             output[i][13] = result.get_text()
+        elif result.get("data-th") == "上限人數：":
+            output[i][14] = result.get_text()
         elif result.get("data-th") == "登記人數：":
-            output[i][14] = re.sub(r"\s+", "", result.get_text())
+            output[i][15] = re.sub(r"\s+", "", result.get_text())
         elif result.get("data-th") == "選上人數：":
-            output[i][15] = result.get_text()
+            output[i][16] = result.get_text()
             if int(result.get_text()) < 10:
                 if ("碩" in unit) & (int(result.get_text()) >= 3):
-                    output[i][18] = "Y"
+                    output[i][19] = "Y"
                 elif (
-                    ("博" in unit) & ("碩" not in unit) & (int(result.get_text()) >= 1)
+                    ("博" in unit) & ("碩" not in unit) & (
+                        int(result.get_text()) >= 1)
                 ):
-                    output[i][18] = "Y"
+                    output[i][19] = "Y"
                 else:
-                    output[i][18] = "N"
+                    output[i][19] = "N"
             else:
-                output[i][18] = "Y"
+                output[i][19] = "Y"
         elif result.get("data-th") == "可跨班：":
-            output[i][16] = result.get_text()
+            output[i][17] = result.get_text()
         elif result.get("data-th") == "備註：":
-            output[i][17] = result.get_text().strip()
+            output[i][18] = result.get_text().strip()
             i = i + 1
 
 
@@ -186,6 +192,7 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
             "課程名稱(英)",
             "教學大綱(中)",
             "教學大綱(英)",
+            "未填教學大綱",
             "課程性質",
             "課程性質2",
             "全英語授課",
@@ -225,12 +232,12 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
                 output[i][16],
                 output[i][17],
                 output[i][18],
+                output[i][19],
             ]
         )
     # 關閉檔案
     csvfile.close()
 
-import openpyxl
 
 csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
 raw_data = csv.reader(csvfile)  # 讀取 CSV 檔案
@@ -242,14 +249,112 @@ s1 = wb["Sheet"]
 for i in data:
     s1.append(i)  # 逐筆添加到最後一列
 
-from datetime import datetime
 
 s1.title = year + "-" + semester + "開課查詢"
-wb.save("開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx")
+xlsx_filename = "開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx"
+
+
+def is_contain_chinese(word):
+    """
+    判断字符串是否包含中文字符
+    :param word: 字符串
+    :return: 布尔值，True表示包含中文，False表示不包含中文
+    """
+    pattern = re.compile(r'[\u4e00-\u9fa5]')
+    match = pattern.search(word)
+    return True if match else False
+
+
+max_column = s1.max_column
+max_column_dict = {}
+column_width = 0
+for i in range(1, max_column+1):
+    sheet_value_list = [k for k in str(s1.cell(row=1, column=i).value)]
+    for v in sheet_value_list:
+        # print(v)
+        if is_contain_chinese(v) == True:
+            column_width += 2.2
+        else:
+            column_width += 0.8
+    # print('-----next------')
+    max_column_dict[i] = column_width + 0.5
+    column_width = 0
+
+print(max_column_dict)
+
+
+def get_num_column_dict():
+    num_str_dict = {}
+    A_Z = [chr(a) for a in range(ord('A'), ord('Z')+1)]
+    AA_AZ = ['A' + chr(a) for a in range(ord('A'), ord('Z')+1)]
+    A_AZ = A_Z + AA_AZ
+    for i in A_AZ:
+        num_str_dict[A_AZ.index(i) + 1] = i
+    return num_str_dict
+
+
+num_str_dict = get_num_column_dict()
+for key, value in max_column_dict.items():
+    s1.column_dimensions[num_str_dict[key]].width = value
+
+wb.save(xlsx_filename)
+
+
+# 關閉並移除csv檔
+csvfile.close()
+os.remove(file_name)
 print("done")
 
 # 自適應欄寬
 # https://blog.csdn.net/qq_33704787/article/details/124722917
+
+
+# class xlsAutoFit():
+#     def get_num_column_dict(self):
+#         num_str_dict = {}
+#         A_Z = [chr(a) for a in range(ord('A'), ord('Z')+1)]
+#         AA_AZ = ['A' + chr(a) for a in range(ord('A'), ord('Z')+1)]
+#         A_AZ = A_Z + AA_AZ
+#         for i in A_AZ:
+#             num_str_dict[A_AZ.index(i) + 1] = i
+#         return num_str_dict
+
+#     def style_excel(self, excel_name: str, sheet_name: str):
+#         wb = openpyxl.load_workbook(excel_name)
+#         sheet = wb[sheet_name]
+#         max_column = sheet.max_column
+#         max_row = sheet.max_row
+#         max_column_dict = {}
+#         num_str_dict = self.get_num_column_dict()
+
+#         for i in range(1, max_column + 1):
+#             for j in range(1, max_row + 1):
+#                 column = 0
+#                 sheet_value_list = [k for k in str(
+#                     sheet.cell(row=j, column=i).value)]
+#                 for v in sheet_value_list:
+#                     if v.isdigit() == True or v.isalpha() == True:
+#                         column += 1.1
+#                     else:
+#                         column += 2.2
+#                 try:
+#                     if column > max_column_dict[i]:
+#                         max_column_dict[i] = column
+#                 except Exception as e:
+#                     max_column_dict[i] = column
+#             for key, value in max_column_dict.items():
+#                 sheet.column_dimensions[num_str_dict[key]].width = value
+#                 print('num_str_dict[key]= ', num_str_dict[key])
+#                 print('value= ', value)
+
+# en = xlsAutoFit()
+# en.style_excel('開課查詢_2024-03-06.xlsx', '112-2開課查詢')
+# print('done formatting excel.')
+
+
+# print('max_column=', max_column)
+
+# print('done formatting excel.')
 
 # 做vlookup查出系所和承辦人
 

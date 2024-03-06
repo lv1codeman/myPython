@@ -16,14 +16,16 @@ pip install selenium
 ```
 pip install BeautifulSoup4
 ```
+```
+pip install openpyxl
+```
 3. 執行程式  
 ```
 python course01.py
 ```
-4. 資料夾內的1122_course01.csv即為結果  
-  新增輸出：開課查詢_[date].xlsx
+4. 資料夾內的開課查詢_[date].xlsx即為結果  
 > [!Note] 
-> 檔名開頭為當前學年度學期
+> [date]為當前日期
 # Useful vscode extensions
 - Text Pastry  
   Generate increment numbers.
@@ -32,3 +34,15 @@ python course01.py
 - Python  
   python language highlight
   
+## 使用pyinstaller打包成執行檔
+1. 安裝pyinstaller
+```
+pip install pyinstaller
+```
+2. 執行封裝
+```
+pyinstaller -F .\course01.py
+```
+3. 產生資料夾build、dist，其中dist內即有.exe檔可執行
+> [!Note]
+> 使用course01.exe時須將chrome webdriver放在同一資料夾內
