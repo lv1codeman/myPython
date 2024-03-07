@@ -1,16 +1,3 @@
-# 使用pyinstaller打包成.exe執行檔
-# https://medium.com/pyladies-taiwan/python-%E5%B0%87python%E6%89%93%E5%8C%85%E6%88%90exe%E6%AA%94-32a4bacbe351
-
-
-# import requests
-# from bs4 import BeautifulSoup
-
-# response = requests.get("http://webap0.ncue.edu.tw/deanv2/other/ob010")
-# response.encoding = 'utf-8'
-# soup = BeautifulSoup(response.text, "html.parser")
-# result = soup.find(id='result')
-# print(result)
-
 # 載入需要的套件
 from datetime import datetime
 import openpyxl
@@ -72,24 +59,18 @@ try:
     print("Page is ready!")
     # 畫面截圖（檢查用）
     driver.save_screenshot("python_test.png")
-
     html = driver.page_source
     driver.close()  # 關閉瀏覽器
     soup = BeautifulSoup(html, "html.parser")
-
     results = soup.find(id="result")
     results_row = results.select("tbody tr")
-
     # 搜尋到的資料筆數 = row的大小
     row = len(results_row)
     # 建立放output的陣列
     output = [[0] * 20 for i in range(row)]
-
     results = results.select("tbody td")
-
     i = 0
     unit = ""  # 開課單位
-
     for result in results:
         if result.get("data-th") == "課程代碼：":
             output[i][0] = result.get_text()
@@ -174,14 +155,10 @@ try:
         elif result.get("data-th") == "備註：":
             output[i][18] = result.get_text().strip()
             i = i + 1
-
-
 except TimeoutException:
     print("Loading took too much time!")
 
-
 file_name = year + semester + "_course_list.csv"
-
 # 開啟輸出的 CSV 檔案(準備寫入檔案)
 with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     # 建立 CSV 檔寫入器
@@ -248,7 +225,6 @@ raw_data = csv.reader(csvfile)  # 讀取 CSV 檔案
 data = list(raw_data)  # 轉換成二維串列
 
 wb = openpyxl.Workbook()  # 建立空白的 Excel 活頁簿物件
-# sheet = wb.create_sheet("csv")  # 建立空白的工作表
 s1 = wb["Sheet"]
 for i in data:
     s1.append(i)  # 逐筆添加到最後一列
@@ -258,14 +234,14 @@ s1.title = year + "-" + semester + "開課查詢"
 xlsx_filename = "開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx"
 
 
-def is_contain_chinese(word):
+def is_contain_chinese(str):
     """
-    判断字符串是否包含中文字符
-    :param word: 字符串
-    :return: 布尔值，True表示包含中文，False表示不包含中文
+    :feature 判斷字串是否含中文
+    :param str 輸入字串
+    :return: True=含有中文，False=沒有中文
     """
     pattern = re.compile(r'[\u4e00-\u9fa5]')
-    match = pattern.search(word)
+    match = pattern.search(str)
     return True if match else False
 
 
@@ -275,15 +251,12 @@ column_width = 0
 for i in range(1, max_column+1):
     sheet_value_list = [k for k in str(s1.cell(row=1, column=i).value)]
     for v in sheet_value_list:
-        # print(v)
         if is_contain_chinese(v) == True:
             column_width += 2.2
         else:
             column_width += 0.8
-    # print('-----next------')
     max_column_dict[i] = column_width + 0.5
     column_width = 0
-
 print(max_column_dict)
 
 
@@ -300,78 +273,8 @@ def get_num_column_dict():
 num_str_dict = get_num_column_dict()
 for key, value in max_column_dict.items():
     s1.column_dimensions[num_str_dict[key]].width = value
-
 wb.save(xlsx_filename)
-
-
 # 關閉並移除csv檔
 csvfile.close()
 os.remove(file_name)
 print("done")
-
-# 自適應欄寬
-# https://blog.csdn.net/qq_33704787/article/details/124722917
-
-
-# class xlsAutoFit():
-#     def get_num_column_dict(self):
-#         num_str_dict = {}
-#         A_Z = [chr(a) for a in range(ord('A'), ord('Z')+1)]
-#         AA_AZ = ['A' + chr(a) for a in range(ord('A'), ord('Z')+1)]
-#         A_AZ = A_Z + AA_AZ
-#         for i in A_AZ:
-#             num_str_dict[A_AZ.index(i) + 1] = i
-#         return num_str_dict
-
-#     def style_excel(self, excel_name: str, sheet_name: str):
-#         wb = openpyxl.load_workbook(excel_name)
-#         sheet = wb[sheet_name]
-#         max_column = sheet.max_column
-#         max_row = sheet.max_row
-#         max_column_dict = {}
-#         num_str_dict = self.get_num_column_dict()
-
-#         for i in range(1, max_column + 1):
-#             for j in range(1, max_row + 1):
-#                 column = 0
-#                 sheet_value_list = [k for k in str(
-#                     sheet.cell(row=j, column=i).value)]
-#                 for v in sheet_value_list:
-#                     if v.isdigit() == True or v.isalpha() == True:
-#                         column += 1.1
-#                     else:
-#                         column += 2.2
-#                 try:
-#                     if column > max_column_dict[i]:
-#                         max_column_dict[i] = column
-#                 except Exception as e:
-#                     max_column_dict[i] = column
-#             for key, value in max_column_dict.items():
-#                 sheet.column_dimensions[num_str_dict[key]].width = value
-#                 print('num_str_dict[key]= ', num_str_dict[key])
-#                 print('value= ', value)
-
-# en = xlsAutoFit()
-# en.style_excel('開課查詢_2024-03-06.xlsx', '112-2開課查詢')
-# print('done formatting excel.')
-
-
-# print('max_column=', max_column)
-
-# print('done formatting excel.')
-
-# 做vlookup查出系所和承辦人
-
-# # 讀入表1
-# df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8")
-# # 讀入表2
-# df2 = pd.read_csv(file_name, encoding="UTF-8")
-
-# # 關聯數據
-# data = df2.merge(
-#     df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
-# )
-
-# # 保存數據
-# data.to_csv(file_name, encoding="utf-8-sig", index=False)
-# # excel打開後另存新檔>工具>編碼UTF-8>存檔>不儲存關閉檔案>用記事本開啟>另存新檔>編碼UTF-8

@@ -21,7 +21,7 @@ pip install openpyxl
 ```
 3. 執行程式  
 ```
-python course01.py
+python getcourse.py
 ```
 4. 資料夾內的開課查詢_[date].xlsx即為結果  
 > [!Note] 
