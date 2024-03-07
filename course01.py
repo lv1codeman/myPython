@@ -173,7 +173,7 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     # 寫入一列資料
     writer.writerow(
         [
-            "課程代碼", "開課班別(代表)", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
+            "課程代碼", "開課班別", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
             "教學大綱(英)", "未填教學大綱", "課程性質", "課程性質2", "全英語授課",
             "學分", "教師姓名", "上課大樓", "上課節次+地點", "上限人數",
             "登記人數", "選上人數", "可跨班", "備註", "符合開課標準"
@@ -192,6 +192,18 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
         )
     # 關閉檔案
     csvfile.close()
+
+# 做vlookup查出系所和承辦人
+# 讀入表1
+df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8-sig")
+# 讀入表2
+df2 = pd.read_csv(file_name, encoding="UTF-8-sig")
+# 關聯數據
+data = df2.merge(
+    df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
+)
+# 保存數據
+data.to_csv(file_name, encoding="utf-8-sig", index=False)
 
 
 csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
@@ -284,19 +296,3 @@ print("done")
 # print('max_column=', max_column)
 
 # print('done formatting excel.')
-
-# 做vlookup查出系所和承辦人
-
-# # 讀入表1
-# df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8")
-# # 讀入表2
-# df2 = pd.read_csv(file_name, encoding="UTF-8")
-
-# # 關聯數據
-# data = df2.merge(
-#     df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
-# )
-
-# # 保存數據
-# data.to_csv(file_name, encoding="utf-8-sig", index=False)
-# # excel打開後另存新檔>工具>編碼UTF-8>存檔>不儲存關閉檔案>用記事本開啟>另存新檔>編碼UTF-8

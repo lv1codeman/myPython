@@ -38,16 +38,17 @@ select_element = driver.find_element(By.ID, "ddl_yms_smester")
 select = Select(select_element)
 select.select_by_value(semester)
 
-# 查詢指定課程代碼
-# <input>
-# select_element = driver.find_element(By.ID, "scr_selcode")
-# select_element.send_keys("71041")
+""" 查詢指定課程代碼 查詢指定修課班別
+查詢指定課程代碼
+<input>
+select_element = driver.find_element(By.ID, "scr_selcode")
+select_element.send_keys("71041") 
 
-# 查詢指定修課班別
-# select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
-# select = Select(select_element)
-# select.select_by_value('D110BN1A')
-
+查詢指定修課班別
+select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
+select = Select(select_element)
+select.select_by_value('D110BN1A')
+"""
 # 點擊「查詢」按鈕
 button = driver.find_element(By.XPATH, "//input[@value='查詢']")
 button.click()
