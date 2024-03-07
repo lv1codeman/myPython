@@ -26,4 +26,24 @@ def get_num_column_dict():
     return num_str_dict
 
 
+def getSyllabusColumns(result, hasCHT, hasENG):
+    output = [''] * 3
+    if hasCHT == False and hasENG == False:
+        output[0] = "無檔案"
+        output[1] = "No file"
+        output[2] = "Y"
+    else:
+        output[2] = "N"
+        if hasCHT == True and hasENG == False:
+            output[0] = result.find("a").text.strip()
+            output[1] = "No file"
+        elif hasCHT == False and hasENG == True:
+            output[0] = "無檔案"
+            output[1] = result.find("a").text.strip()
+        else:
+            output[0] = result.find("a").text.strip()
+            output[1] = result.find(
+                "a").next_sibling.next_sibling.next_sibling.strip()
+    return output
+
 # print(get_num_column_dict.__doc__)

@@ -14,6 +14,8 @@
 # 載入需要的套件
 from util import get_num_column_dict
 from util import is_contain_chinese
+from util import getSyllabusColumns
+
 from datetime import datetime
 import openpyxl
 import pandas as pd
@@ -111,29 +113,12 @@ try:
                 output[i][2] = course_name_list[0]
                 output[i][3] = ""
         elif result.get("data-th") == "教學大綱：":
-            if ("無檔案" in result.text) & ("No file" in result.text):
-                output[i][4] = "無檔案"
-                output[i][5] = "No file"
-                output[i][6] = "Y"
-            else:
-                output[i][6] = "N"
-                if ("無檔案" in result.text) & (not "No file" in result.text):
-                    cht_syllabus = "無檔案"
-                    eng_syllabus = result.find("a").text.strip()
-                    output[i][4] = cht_syllabus
-                    output[i][5] = eng_syllabus
-                elif not ("No file" in result.text) & (not "無檔案" in result.text):
-                    cht_syllabus = result.find("a").text.strip()
-                    eng_syllabus = "No file"
-                    output[i][4] = cht_syllabus
-                    output[i][5] = eng_syllabus
-                else:
-                    cht_syllabus = result.find("a").text.strip()
-                    eng_syllabus = result.find(
-                        "a"
-                    ).next_sibling.next_sibling.next_sibling.strip()
-                    output[i][4] = cht_syllabus
-                    output[i][5] = eng_syllabus
+            hasCHT = not "無檔案" in result.text
+            hasENG = not "No file" in result.text
+            res = getSyllabusColumns(result, hasCHT, hasENG)
+            output[i][4] = res[0]
+            output[i][5] = res[1]
+            output[i][6] = res[2]
         elif result.get("data-th") == "課程性質：":
             output[i][7] = result.get_text()
         elif result.get("data-th") == "課程性質2：":
@@ -176,14 +161,10 @@ try:
         elif result.get("data-th") == "備註：":
             output[i][18] = result.get_text().strip()
             i = i + 1
-
-
 except TimeoutException:
     print("Loading took too much time!")
 
-
 file_name = year + semester + "_course_list.csv"
-
 # 開啟輸出的 CSV 檔案(準備寫入檔案)
 with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     # 建立 CSV 檔寫入器
@@ -192,26 +173,10 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     # 寫入一列資料
     writer.writerow(
         [
-            "課程代碼",
-            "開課班別(代表)",
-            "課程名稱(中)",
-            "課程名稱(英)",
-            "教學大綱(中)",
-            "教學大綱(英)",
-            "未填教學大綱",
-            "課程性質",
-            "課程性質2",
-            "全英語授課",
-            "學分",
-            "教師姓名",
-            "上課大樓",
-            "上課節次+地點",
-            "上限人數",
-            "登記人數",
-            "選上人數",
-            "可跨班",
-            "備註",
-            "符合開課標準",
+            "課程代碼", "開課班別(代表)", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
+            "教學大綱(英)", "未填教學大綱", "課程性質", "課程性質2", "全英語授課",
+            "學分", "教師姓名", "上課大樓", "上課節次+地點", "上限人數",
+            "登記人數", "選上人數", "可跨班", "備註", "符合開課標準"
         ]
     )
 
@@ -219,26 +184,10 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     for i, length in enumerate(output):
         writer.writerow(
             [
-                output[i][0],
-                output[i][1],
-                output[i][2],
-                output[i][3],
-                output[i][4],
-                output[i][5],
-                output[i][6],
-                output[i][7],
-                output[i][8],
-                output[i][9],
-                output[i][10],
-                output[i][11],
-                output[i][12],
-                output[i][13],
-                output[i][14],
-                output[i][15],
-                output[i][16],
-                output[i][17],
-                output[i][18],
-                output[i][19],
+                output[i][0], output[i][1], output[i][2], output[i][3], output[i][4],
+                output[i][5], output[i][6], output[i][7], output[i][8], output[i][9],
+                output[i][10], output[i][11], output[i][12], output[i][13], output[i][14],
+                output[i][15], output[i][16], output[i][17], output[i][18], output[i][19]
             ]
         )
     # 關閉檔案
@@ -279,7 +228,6 @@ for key, value in max_column_dict.items():
     s1.column_dimensions[num_str_dict[key]].width = value
 
 wb.save(xlsx_filename)
-
 
 # 關閉並移除csv檔
 csvfile.close()
