@@ -1,4 +1,6 @@
 # 載入需要的套件
+from util import is_contain_chinese
+from util import get_num_column_dict
 from datetime import datetime
 import openpyxl
 import pandas as pd
@@ -218,8 +220,6 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
         )
     # 關閉檔案
     csvfile.close()
-
-
 csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
 raw_data = csv.reader(csvfile)  # 讀取 CSV 檔案
 data = list(raw_data)  # 轉換成二維串列
@@ -229,25 +229,13 @@ s1 = wb["Sheet"]
 for i in data:
     s1.append(i)  # 逐筆添加到最後一列
 
-
 s1.title = year + "-" + semester + "開課查詢"
 xlsx_filename = "開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx"
-
-
-def is_contain_chinese(str):
-    """
-    :feature 判斷字串是否含中文
-    :param str 輸入字串
-    :return: True=含有中文，False=沒有中文
-    """
-    pattern = re.compile(r'[\u4e00-\u9fa5]')
-    match = pattern.search(str)
-    return True if match else False
-
 
 max_column = s1.max_column
 max_column_dict = {}
 column_width = 0
+
 for i in range(1, max_column+1):
     sheet_value_list = [k for k in str(s1.cell(row=1, column=i).value)]
     for v in sheet_value_list:
@@ -257,18 +245,6 @@ for i in range(1, max_column+1):
             column_width += 0.8
     max_column_dict[i] = column_width + 0.5
     column_width = 0
-print(max_column_dict)
-
-
-def get_num_column_dict():
-    num_str_dict = {}
-    A_Z = [chr(a) for a in range(ord('A'), ord('Z')+1)]
-    AA_AZ = ['A' + chr(a) for a in range(ord('A'), ord('Z')+1)]
-    A_AZ = A_Z + AA_AZ
-    for i in A_AZ:
-        num_str_dict[A_AZ.index(i) + 1] = i
-    return num_str_dict
-
 
 num_str_dict = get_num_column_dict()
 for key, value in max_column_dict.items():

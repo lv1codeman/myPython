@@ -42,7 +42,7 @@ pip install pyinstaller
 ```
 2. 執行封裝
 ```
-pyinstaller -F .\course01.py
+pyinstaller -F getcourse.py
 ```
 3. 產生資料夾build、dist，其中dist內即有.exe檔可執行
 > [!Note]

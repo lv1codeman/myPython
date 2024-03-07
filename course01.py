@@ -12,6 +12,8 @@
 # print(result)
 
 # 載入需要的套件
+from util import get_num_column_dict
+from util import is_contain_chinese
 from datetime import datetime
 import openpyxl
 import pandas as pd
@@ -258,46 +260,21 @@ s1.title = year + "-" + semester + "開課查詢"
 xlsx_filename = "開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx"
 
 
-def is_contain_chinese(word):
-    """
-    判断字符串是否包含中文字符
-    :param word: 字符串
-    :return: 布尔值，True表示包含中文，False表示不包含中文
-    """
-    pattern = re.compile(r'[\u4e00-\u9fa5]')
-    match = pattern.search(word)
-    return True if match else False
-
-
 max_column = s1.max_column
 max_column_dict = {}
 column_width = 0
 for i in range(1, max_column+1):
     sheet_value_list = [k for k in str(s1.cell(row=1, column=i).value)]
     for v in sheet_value_list:
-        # print(v)
         if is_contain_chinese(v) == True:
             column_width += 2.2
         else:
             column_width += 0.8
-    # print('-----next------')
     max_column_dict[i] = column_width + 0.5
     column_width = 0
 
-print(max_column_dict)
-
-
-def get_num_column_dict():
-    num_str_dict = {}
-    A_Z = [chr(a) for a in range(ord('A'), ord('Z')+1)]
-    AA_AZ = ['A' + chr(a) for a in range(ord('A'), ord('Z')+1)]
-    A_AZ = A_Z + AA_AZ
-    for i in A_AZ:
-        num_str_dict[A_AZ.index(i) + 1] = i
-    return num_str_dict
-
-
 num_str_dict = get_num_column_dict()
+# print(num_str_dict)
 for key, value in max_column_dict.items():
     s1.column_dimensions[num_str_dict[key]].width = value
 
