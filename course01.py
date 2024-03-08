@@ -12,6 +12,7 @@
 # print(result)
 
 # 載入需要的套件
+import numpy as np
 from util import get_num_column_dict
 from util import is_contain_chinese
 from util import getSyllabusColumns
@@ -30,6 +31,34 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import re
 import csv
+import sys
+
+
+# 改搜尋資料改這裡
+
+while True:
+    try:
+        print("請輸入搜尋條件...")
+
+        year = input("學年度: ")
+        if re.match(r"^(9[5-9]|1[0-4][0-9]|150)$", year) is None:
+            raise ValueError("[必填欄位] 學年度錯誤(例: 112)")
+
+        semester = input("學期: ")
+        if re.match(r"^[1234]{1}$", semester) is None:
+            raise ValueError("[必填欄位] 學期錯誤(例: 1)")
+
+        crsid = input("課程代碼(為空則查詢全部): ")
+        if re.match(r"^$|([A-Z0-9]{2}\d{3})$", crsid) is None:
+            raise ValueError("[非必填欄位] 課程代碼僅限英數字")
+    except ValueError as err:
+        print("輸入有誤，請檢查輸入的值")
+        print("錯誤訊息: ", err.args)
+        os.system("pause")
+        continue
+    else:
+        break
+
 
 # 開啟瀏覽器視窗(Chrome)
 # 方法一：執行前需開啟chromedriver.exe且與執行檔在同一個工作目錄
@@ -37,10 +66,8 @@ driver = webdriver.Chrome()
 # 方法二：或是直接指定exe檔案路徑
 # driver = webdriver.Chrome('./chromedriver')
 driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")  # 更改網址以前往不同網頁
-
-# 改搜尋資料改這裡
-year = "112"  # 學年度
-semester = "2"  # 學期
+# year = "112"  # 學年度
+# semester = "2"  # 學期
 
 # 定位搜尋框
 # <select>
@@ -54,8 +81,10 @@ select.select_by_value(semester)
 
 # 查詢指定課程代碼
 # <input>
-# select_element = driver.find_element(By.ID, "scr_selcode")
-# select_element.send_keys("71041")
+
+if not crsid:
+    select_element = driver.find_element(By.ID, "scr_selcode")
+    select_element.send_keys(crsid)
 
 # 查詢指定修課班別
 # select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
@@ -92,6 +121,7 @@ try:
     results = results.select("tbody td")
 
     i = 0
+    deli = 0
     unit = ""  # 開課單位
 
     for result in results:
@@ -133,7 +163,13 @@ try:
             for teacher in teachers:
                 teacher_list.append(teacher.get_text())
             teachers = ",".join(str(element) for element in teacher_list)
+
+            # if ("論文" in teachers.strip()) or ("校際教師" in teachers.strip()):
+            #     i = i - 1
+            #     deli = deli + 1
+            #     continue
             output[i][11] = teachers.strip()
+            # output[i][11] = result.get_text()
         elif result.get("data-th") == "上課大樓：":
             output[i][12] = result.get_text()
         elif result.get("data-th") == "上課節次+地點：":
@@ -163,6 +199,11 @@ try:
             i = i + 1
 except TimeoutException:
     print("Loading took too much time!")
+i = i - deli
+
+# print(output)
+# output2 = np.append(output)
+
 
 file_name = year + semester + "_course_list.csv"
 # 開啟輸出的 CSV 檔案(準備寫入檔案)
@@ -218,7 +259,8 @@ for i in data:
 
 
 s1.title = year + "-" + semester + "開課查詢"
-xlsx_filename = "開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx"
+xlsx_filename = year + "-" + semester + "開課查詢_" + \
+    datetime.now().strftime("%Y-%m-%d") + ".xlsx"
 
 
 max_column = s1.max_column
@@ -238,6 +280,7 @@ num_str_dict = get_num_column_dict()
 # print(num_str_dict)
 for key, value in max_column_dict.items():
     s1.column_dimensions[num_str_dict[key]].width = value
+
 
 wb.save(xlsx_filename)
 

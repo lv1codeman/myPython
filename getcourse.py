@@ -1,7 +1,9 @@
 # 載入需要的套件
-from util import is_contain_chinese
+import numpy as np
 from util import get_num_column_dict
+from util import is_contain_chinese
 from util import getSyllabusColumns
+
 from datetime import datetime
 import openpyxl
 import pandas as pd
@@ -16,39 +18,62 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import re
 import csv
+import sys
+
+while True:
+    try:
+        print("請輸入搜尋條件或輸入q離開...")
+
+        year = input("學年度: ")
+        if year == "q":
+            sys.exit(0)
+        if re.match(r"^(9[5-9]|1[0-4][0-9]|150)$", year) is None:
+            raise ValueError("[必填欄位] 學年度錯誤(例: 112)")
+
+        semester = input("學期: ")
+        if semester == "q":
+            sys.exit(0)
+        if re.match(r"^[1234]{1}$", semester) is None:
+            raise ValueError("[必填欄位] 學期錯誤(例: 1)")
+
+        crsid = input("課程代碼(為空則查詢全部): ")
+        if crsid == "q":
+            sys.exit(0)
+        if re.match(r"^$|([A-Z0-9]{2}\d{3})$", crsid) is None:
+            raise ValueError("[非必填欄位] 課程代碼僅限英數字")
+    except ValueError as err:
+        print("輸入有誤，請檢查輸入的值")
+        print("錯誤訊息: ", err.args)
+        os.system("pause")
+        continue
+    else:
+        break
 
 # 開啟瀏覽器視窗(Chrome)
 # 方法一：執行前需開啟chromedriver.exe且與執行檔在同一個工作目錄
 driver = webdriver.Chrome()
-# 方法二：或是直接指定exe檔案路徑
-# driver = webdriver.Chrome('./chromedriver')
-driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")  # 更改網址以前往不同網頁
+driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
 
-# 改搜尋資料改這裡
-year = "112"  # 學年度
-semester = "2"  # 學期
-
-# 定位搜尋框
-# <select>
+# 指定條件區的輸入
+# 指定學年度<select>
 select_element = driver.find_element(By.ID, "ddl_yms_year")
 select = Select(select_element)
 select.select_by_value(year)
-
+# 指定學期<select>
 select_element = driver.find_element(By.ID, "ddl_yms_smester")
 select = Select(select_element)
 select.select_by_value(semester)
 
-""" 查詢指定課程代碼 查詢指定修課班別
-查詢指定課程代碼
-<input>
-select_element = driver.find_element(By.ID, "scr_selcode")
-select_element.send_keys("71041") 
+# 指定課程代碼<input>
+if not crsid:
+    select_element = driver.find_element(By.ID, "scr_selcode")
+    select_element.send_keys(crsid)
 
-查詢指定修課班別
-select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
-select = Select(select_element)
-select.select_by_value('D110BN1A')
-"""
+# 指定修課班別<select>
+# select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
+# select = Select(select_element)
+# select.select_by_value('D110BN1A')
+
 # 點擊「查詢」按鈕
 button = driver.find_element(By.XPATH, "//input[@value='查詢']")
 button.click()
@@ -63,18 +88,25 @@ try:
     print("Page is ready!")
     # 畫面截圖（檢查用）
     driver.save_screenshot("python_test.png")
+
     html = driver.page_source
     driver.close()  # 關閉瀏覽器
     soup = BeautifulSoup(html, "html.parser")
+
     results = soup.find(id="result")
     results_row = results.select("tbody tr")
+
     # 搜尋到的資料筆數 = row的大小
     row = len(results_row)
     # 建立放output的陣列
     output = [[0] * 20 for i in range(row)]
+
     results = results.select("tbody td")
+
     i = 0
+    deli = 0
     unit = ""  # 開課單位
+
     for result in results:
         if result.get("data-th") == "課程代碼：":
             output[i][0] = result.get_text()
@@ -154,7 +186,7 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     # 寫入一列資料
     writer.writerow(
         [
-            "課程代碼", "開課班別(代表)", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
+            "課程代碼", "開課班別", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
             "教學大綱(英)", "未填教學大綱", "課程性質", "課程性質2", "全英語授課",
             "學分", "教師姓名", "上課大樓", "上課節次+地點", "上限人數",
             "登記人數", "選上人數", "可跨班", "備註", "符合開課標準"
@@ -173,22 +205,39 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
         )
     # 關閉檔案
     csvfile.close()
+
+# 做vlookup查出系所和承辦人
+# 讀入表1
+df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8-sig")
+# 讀入表2
+df2 = pd.read_csv(file_name, encoding="UTF-8-sig")
+# 關聯數據
+data = df2.merge(
+    df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
+)
+# 保存數據
+data.to_csv(file_name, encoding="utf-8-sig", index=False)
+
+
 csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
 raw_data = csv.reader(csvfile)  # 讀取 CSV 檔案
 data = list(raw_data)  # 轉換成二維串列
 
 wb = openpyxl.Workbook()  # 建立空白的 Excel 活頁簿物件
+# sheet = wb.create_sheet("csv")  # 建立空白的工作表
 s1 = wb["Sheet"]
 for i in data:
     s1.append(i)  # 逐筆添加到最後一列
 
+
 s1.title = year + "-" + semester + "開課查詢"
-xlsx_filename = "開課查詢_" + datetime.now().strftime("%Y-%m-%d") + ".xlsx"
+xlsx_filename = year + "-" + semester + "開課查詢_" + \
+    datetime.now().strftime("%Y-%m-%d") + ".xlsx"
+
 
 max_column = s1.max_column
 max_column_dict = {}
 column_width = 0
-
 for i in range(1, max_column+1):
     sheet_value_list = [k for k in str(s1.cell(row=1, column=i).value)]
     for v in sheet_value_list:
@@ -200,9 +249,13 @@ for i in range(1, max_column+1):
     column_width = 0
 
 num_str_dict = get_num_column_dict()
+# print(num_str_dict)
 for key, value in max_column_dict.items():
     s1.column_dimensions[num_str_dict[key]].width = value
+
+
 wb.save(xlsx_filename)
+
 # 關閉並移除csv檔
 csvfile.close()
 os.remove(file_name)
