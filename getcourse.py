@@ -65,7 +65,7 @@ select = Select(select_element)
 select.select_by_value(semester)
 
 # 指定課程代碼<input>
-if not crsid:
+if len(crsid) == 5:
     select_element = driver.find_element(By.ID, "scr_selcode")
     select_element.send_keys(crsid)
 
@@ -260,3 +260,5 @@ wb.save(xlsx_filename)
 csvfile.close()
 os.remove(file_name)
 print("done")
+os.system("pause")
+sys.exit(0)
