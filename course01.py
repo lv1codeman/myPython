@@ -38,17 +38,23 @@ import sys
 
 while True:
     try:
-        print("請輸入搜尋條件...")
+        print("請輸入搜尋條件或輸入q離開...")
 
         year = input("學年度: ")
+        if year == "q":
+            sys.exit(0)
         if re.match(r"^(9[5-9]|1[0-4][0-9]|150)$", year) is None:
             raise ValueError("[必填欄位] 學年度錯誤(例: 112)")
 
         semester = input("學期: ")
+        if semester == "q":
+            sys.exit(0)
         if re.match(r"^[1234]{1}$", semester) is None:
             raise ValueError("[必填欄位] 學期錯誤(例: 1)")
 
         crsid = input("課程代碼(為空則查詢全部): ")
+        if crsid == "q":
+            sys.exit(0)
         if re.match(r"^$|([A-Z0-9]{2}\d{3})$", crsid) is None:
             raise ValueError("[非必填欄位] 課程代碼僅限英數字")
     except ValueError as err:
@@ -58,7 +64,6 @@ while True:
         continue
     else:
         break
-
 
 # 開啟瀏覽器視窗(Chrome)
 # 方法一：執行前需開啟chromedriver.exe且與執行檔在同一個工作目錄
@@ -234,17 +239,17 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
     # 關閉檔案
     csvfile.close()
 
-# 做vlookup查出系所和承辦人
-# 讀入表1
-df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8-sig")
-# 讀入表2
-df2 = pd.read_csv(file_name, encoding="UTF-8-sig")
-# 關聯數據
-data = df2.merge(
-    df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
-)
-# 保存數據
-data.to_csv(file_name, encoding="utf-8-sig", index=False)
+# # 做vlookup查出系所和承辦人
+# # 讀入表1
+# df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8-sig")
+# # 讀入表2
+# df2 = pd.read_csv(file_name, encoding="UTF-8-sig")
+# # 關聯數據
+# data = df2.merge(
+#     df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
+# )
+# # 保存數據
+# data.to_csv(file_name, encoding="utf-8-sig", index=False)
 
 
 csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
@@ -288,7 +293,8 @@ wb.save(xlsx_filename)
 csvfile.close()
 os.remove(file_name)
 print("done")
-
+os.system("pause")
+sys.exit(0)
 # 自適應欄寬
 # https://blog.csdn.net/qq_33704787/article/details/124722917
 

@@ -1,4 +1,6 @@
 # Introduction
+主程式：getcourse.py
+開發版：course01.py
 利用selenium爬蟲開課查詢的結果，透過BeautifulSoup4解析後存入.csv檔案，再將.csv檔轉存為.xlsx檔。
 # Feature
 1. 將課程名稱中英文、教學大綱分開存在不同欄位
