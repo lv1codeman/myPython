@@ -208,15 +208,15 @@ with open(file_name, "w", newline="", encoding="utf-8-sig") as csvfile:
 
 # 做vlookup查出系所和承辦人
 # 讀入表1
-df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8-sig")
-# 讀入表2
-df2 = pd.read_csv(file_name, encoding="UTF-8-sig")
-# 關聯數據
-data = df2.merge(
-    df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
-)
-# 保存數據
-data.to_csv(file_name, encoding="utf-8-sig", index=False)
+# df1 = pd.read_csv("系所對照表.csv", encoding="UTF-8-sig")
+# # 讀入表2
+# df2 = pd.read_csv(file_name, encoding="UTF-8-sig")
+# # 關聯數據
+# data = df2.merge(
+#     df1, on="開課班別", left_index=False, right_index=False, sort=False, how="left"
+# )
+# # 保存數據
+# data.to_csv(file_name, encoding="utf-8-sig", index=False)
 
 
 csvfile = open(file_name, encoding="utf-8-sig")  # 開啟 CSV 檔案
