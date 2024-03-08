@@ -255,10 +255,15 @@ for key, value in max_column_dict.items():
 
 
 wb.save(xlsx_filename)
-
 # 關閉並移除csv檔
 csvfile.close()
 os.remove(file_name)
+
+df = pd.read_excel('112-2開課查詢_2024-03-08.xlsx')
+
+# print(df)
+df
+
 print("done")
 os.system("pause")
-sys.exit(0)
+sys.exit()
