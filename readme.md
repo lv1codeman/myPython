@@ -3,6 +3,7 @@ main.py - 主程式
 interface.py - GUI介面  
 util.py - 功能包  
 search_courses.py - 主查詢功能，獨立執行時以CMD介面接收輸入  
+preprocess.py - 預先讀取網頁上下拉選單的選項，在main.py設定到GUI介面上
 # Feature
 利用selenium爬蟲開課查詢的結果，透過BeautifulSoup4解析後存入.csv檔案，再將.csv檔轉存為.xlsx檔。  
 1. 將課程名稱中英文、教學大綱分開存在不同欄位
@@ -56,6 +57,9 @@ python main.py
 3. 執行以下指令生成GUI介面的.py檔案
 ```
 pyuic5 -x [filename].ui -o [filename].py
+```
+```
+pyuic5 -x interface.ui -o interface.py
 ```
 4. 可於[filename].py編輯GUI介面，建議將配置寫在main.py，例如按鈕的動作、下拉選單設定預設值...等。
 ## 使用pyinstaller打包成.exe執行檔

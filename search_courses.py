@@ -21,7 +21,7 @@ import csv
 import sys
 
 
-def search_courses(year=112, semester=2, crsid=""):
+def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass=""):
     # 開啟瀏覽器視窗(Chrome)
     # 方法一：執行前需開啟chromedriver.exe且與執行檔在同一個工作目錄
     driver = webdriver.Chrome()
@@ -43,9 +43,9 @@ def search_courses(year=112, semester=2, crsid=""):
         select_element.send_keys(crsid)
 
     # 指定修課班別<select>
-    # select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
-    # select = Select(select_element)
-    # select.select_by_value('D110BN1A')
+    select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
+    select = Select(select_element)
+    select.select_by_value(crsclassID)
 
     # 點擊「查詢」按鈕
     button = driver.find_element(By.XPATH, "//input[@value='查詢']")
@@ -146,6 +146,7 @@ def search_courses(year=112, semester=2, crsid=""):
                 output[i][17] = result.get_text()
             elif result.get("data-th") == "備註：":
                 output[i][18] = result.get_text().strip()
+
                 i = i + 1
     except TimeoutException:
         print("Loading took too much time!")

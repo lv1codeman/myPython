@@ -8,7 +8,8 @@ df2 = df[["課程代碼", "課程名稱(中)", "課程性質", "可跨班"]]
 
 crsType = list()
 for i in range(len(df2.index)):
-    crsType.append(df2["課程性質"].values[i])
+    # crsType.append(df2["課程性質"].values[i])
+    crsType.append(df2["可跨班"].values[i])
 
 crsType = list(set(crsType))
 
