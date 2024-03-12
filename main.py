@@ -2,11 +2,13 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5 import QtGui
 
 import sys
 import interface
 from search_courses import search_courses
 from preprocess import get_preload_data
+
 
 classes = {}
 
@@ -67,24 +69,23 @@ def preloader(default=False):
     window.le_crsnm.setText("")
 
 
-# def getClassList():
-# # 設置開課班級清單(讀取網頁帶入)
-# classes = get_preload_data("classes")
-# for i in range(0, len(classes)):
-#     window.cb_crsclass.addItem(classes[i][1])
-
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = myMainWindow()
+    window.setWindowIcon(QtGui.QIcon("sixer-small.jpg"))
     window.setWindowTitle("開課查詢")
     window.actionexit.triggered.connect(close)
-    # window.actionGetClassList.triggered.connect(getClassList)
 
     window.pbtn_search.clicked.connect(pbtn_search_click)
     window.pbtn_reset.clicked.connect(pbtn_reset_click)
 
     preloader(True)
+    try:
+        import pyi_splash
+
+        pyi_splash.close()
+    except ImportError:
+        pass
 
     # set validator
     reg = QRegExp(r"^$|([A-Z0-9]{2}\d{3})$")

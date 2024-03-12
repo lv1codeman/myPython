@@ -6,12 +6,23 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 
 
 def get_preload_data(dataType):
     if dataType == "classes":
-        driver = webdriver.Chrome()
+        print("start Chrome")
+
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")  # Disable GPU acceleration
+
+        # Initialize Chrome driver with the specified options
+        driver = webdriver.Chrome(options=chrome_options)
+
+        # driver = webdriver.Chrome()
         driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
+
         html = driver.page_source
         driver.close()  # 關閉瀏覽器
         soup = BeautifulSoup(html, "html.parser")
@@ -21,7 +32,8 @@ def get_preload_data(dataType):
         classes = np.array([[0, 0]])
         for item in res:
             classes = np.concatenate(
-                (classes, [[item.get("value"), item.get_text()]]), axis=0)
+                (classes, [[item.get("value"), item.get_text()]]), axis=0
+            )
         classes = np.delete(classes, 0, 0)
 
         return classes
@@ -62,7 +74,7 @@ def get_preload_data(dataType):
         return crsType
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     res = get_preload_data("classes")
 
     for i in range(0, len(res)):
