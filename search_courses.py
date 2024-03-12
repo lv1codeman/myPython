@@ -132,24 +132,69 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
                 output[i][16] = result.get_text()
                 if int(result.get_text()) < 10:
                     if ("碩" in unit) & (int(result.get_text()) >= 3):
-                        output[i][19] = "Y"
+                        output[i][17] = "Y"
                     elif (
                         ("博" in unit) & ("碩" not in unit) & (
                             int(result.get_text()) >= 1)
                     ):
-                        output[i][19] = "Y"
+                        output[i][17] = "Y"
                     else:
-                        output[i][19] = "N"
+                        output[i][17] = "N"
                 else:
-                    output[i][19] = "Y"
+                    output[i][17] = "Y"
             elif result.get("data-th") == "可跨班：":
-                output[i][17] = result.get_text()
+                match crossclass:
+                    case "可跨班系":
+                        if result.get_text() == "可跨班系":
+                            deli = 1
+                            output[i][18] = result.get_text()
+                        elif result.get_text() == "限本系":
+                            deli = 0
+                            output[i][18] = result.get_text()
+                        elif result.get_text() == "限本班":
+                            deli = 0
+                            output[i][18] = result.get_text()
+                    case "限本系":
+                        if result.get_text() == "可跨班系":
+                            deli = 0
+                            output[i][18] = result.get_text()
+                        elif result.get_text() == "限本系":
+                            deli = 1
+                            output[i][18] = result.get_text()
+                        elif result.get_text() == "限本班":
+                            deli = 0
+                            output[i][18] = result.get_text()
+                    case "限本班":
+                        if result.get_text() == "可跨班系":
+                            deli = 0
+                            output[i][18] = result.get_text()
+                        elif result.get_text() == "限本系":
+                            deli = 0
+                            output[i][18] = result.get_text()
+                        elif result.get_text() == "限本班":
+                            deli = 1
+                            output[i][18] = result.get_text()
             elif result.get("data-th") == "備註：":
-                output[i][18] = result.get_text().strip()
+                output[i][19] = result.get_text().strip()
+                if deli == 1:
+                    i = i + 1
+                else:
+                    for k in range(0, 19):
+                        output[i][k] = 0
 
-                i = i + 1
     except TimeoutException:
         print("Loading took too much time!")
+
+    # print(len(output))
+    # output_length = len(output)-1
+    # for i in range(0, output_length):
+    #     if len(str(output[i][0])) < 2:
+    #         output = np.delete(output, (i), axis=0)
+    # print(len(output))
+
+    output = [row for row in output if row[0] != 0]
+
+    print("end length: ", len(output))
 
     file_name = year + semester + "_course_list.csv"
     # 開啟輸出的 CSV 檔案(準備寫入檔案)
@@ -163,7 +208,7 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
                 "課程代碼", "開課班別", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
                 "教學大綱(英)", "未填教學大綱", "課程性質", "課程性質2", "全英語授課",
                 "學分", "教師姓名", "上課大樓", "上課節次+地點", "上限人數",
-                "登記人數", "選上人數", "可跨班", "備註", "符合開課標準"
+                "登記人數", "選上人數", "符合開課標準", "可跨班", "備註"
             ]
         )
 
