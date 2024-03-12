@@ -173,7 +173,9 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
                             output[i][18] = result.get_text()
                         elif result.get_text() == "限本班":
                             deli = 1
-                            output[i][18] = result.get_text()
+                    case "":
+                        deli = 1
+                        output[i][18] = result.get_text()
             elif result.get("data-th") == "備註：":
                 output[i][19] = result.get_text().strip()
                 if deli == 1:
@@ -185,16 +187,9 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
     except TimeoutException:
         print("Loading took too much time!")
 
-    # print(len(output))
-    # output_length = len(output)-1
-    # for i in range(0, output_length):
-    #     if len(str(output[i][0])) < 2:
-    #         output = np.delete(output, (i), axis=0)
-    # print(len(output))
-
+    # 首欄不為0者才存入output等待輸出
     output = [row for row in output if row[0] != 0]
-
-    print("end length: ", len(output))
+    print("Total output:", len(output), "rows.")
 
     file_name = year + semester + "_course_list.csv"
     # 開啟輸出的 CSV 檔案(準備寫入檔案)
