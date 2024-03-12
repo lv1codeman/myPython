@@ -38,6 +38,7 @@ def pbtn_search_click():
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = myMainWindow()
+    window.setWindowTitle("開課查詢")
     window.menubar
     for i in reversed(range(95, 113)):
         window.cb_year.addItem(str(i))
