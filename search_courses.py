@@ -8,6 +8,7 @@ from datetime import datetime
 import openpyxl
 import pandas as pd
 import os
+
 # import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -134,8 +135,9 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
                     if ("碩" in unit) & (int(result.get_text()) >= 3):
                         output[i][17] = "Y"
                     elif (
-                        ("博" in unit) & ("碩" not in unit) & (
-                            int(result.get_text()) >= 1)
+                        ("博" in unit)
+                        & ("碩" not in unit)
+                        & (int(result.get_text()) >= 1)
                     ):
                         output[i][17] = "Y"
                     else:
@@ -200,10 +202,26 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
         # 寫入一列資料
         writer.writerow(
             [
-                "課程代碼", "開課班別", "課程名稱(中)", "課程名稱(英)", "教學大綱(中)",
-                "教學大綱(英)", "未填教學大綱", "課程性質", "課程性質2", "全英語授課",
-                "學分", "教師姓名", "上課大樓", "上課節次+地點", "上限人數",
-                "登記人數", "選上人數", "符合開課標準", "可跨班", "備註"
+                "課程代碼",
+                "開課班別",
+                "課程名稱(中)",
+                "課程名稱(英)",
+                "教學大綱(中)",
+                "教學大綱(英)",
+                "未填教學大綱",
+                "課程性質",
+                "課程性質2",
+                "全英語授課",
+                "學分",
+                "教師姓名",
+                "上課大樓",
+                "上課節次+地點",
+                "上限人數",
+                "登記人數",
+                "選上人數",
+                "符合開課標準",
+                "可跨班",
+                "備註",
             ]
         )
 
@@ -211,10 +229,26 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
         for i, length in enumerate(output):
             writer.writerow(
                 [
-                    output[i][0], output[i][1], output[i][2], output[i][3], output[i][4],
-                    output[i][5], output[i][6], output[i][7], output[i][8], output[i][9],
-                    output[i][10], output[i][11], output[i][12], output[i][13], output[i][14],
-                    output[i][15], output[i][16], output[i][17], output[i][18], output[i][19]
+                    output[i][0],
+                    output[i][1],
+                    output[i][2],
+                    output[i][3],
+                    output[i][4],
+                    output[i][5],
+                    output[i][6],
+                    output[i][7],
+                    output[i][8],
+                    output[i][9],
+                    output[i][10],
+                    output[i][11],
+                    output[i][12],
+                    output[i][13],
+                    output[i][14],
+                    output[i][15],
+                    output[i][16],
+                    output[i][17],
+                    output[i][18],
+                    output[i][19],
                 ]
             )
         # 關閉檔案
@@ -243,13 +277,19 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
         s1.append(i)  # 逐筆添加到最後一列
 
     s1.title = year + "-" + semester + "開課查詢"
-    xlsx_filename = year + "-" + semester + "開課查詢_" + \
-        datetime.now().strftime("%Y-%m-%d") + ".xlsx"
+    xlsx_filename = (
+        year
+        + "-"
+        + semester
+        + "開課查詢_"
+        + datetime.now().strftime("%Y-%m-%d")
+        + ".xlsx"
+    )
 
     max_column = s1.max_column
     max_column_dict = {}
     column_width = 0
-    for i in range(1, max_column+1):
+    for i in range(1, max_column + 1):
         sheet_value_list = [k for k in str(s1.cell(row=1, column=i).value)]
         for v in sheet_value_list:
             if is_contain_chinese(v) == True:
@@ -269,7 +309,7 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
     csvfile.close()
     os.remove(file_name)
 
-    df = pd.read_excel('112-2開課查詢_2024-03-08.xlsx')
+    # df = pd.read_excel('112-2開課查詢_2024-03-08.xlsx')
 
     # print(df)
 

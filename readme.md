@@ -11,9 +11,16 @@ preprocess.py - 預先讀取網頁上下拉選單的選項，在main.py設定到
 # Usage
 1. 下載[Python](https://www.python.org/downloads/)  
   安裝時勾選add Python to PATH
-2. 開啟vscode terminal安裝使用到的模組  
+2. 開啟vscode terminal安裝使用到的Library  
+3. 執行程式  
+```
+python main.py
+```
+4. 資料夾內的.xlsx檔即為結果  
+> [!Note] 
+> [date]為當前日期  
 
-## 需安裝的Library
+# 需安裝的Library
 Webdriver
 ```
 pip install selenium
@@ -35,13 +42,7 @@ Merge excel
 pip install pandas
 ```
 
-3. 執行程式  
-```
-python main.py
-```
-4. 資料夾內的開課查詢_[date].xlsx即為結果  
-> [!Note] 
-> [date]為當前日期
+
 # Useful vscode extensions
 - Text Pastry  
   Generate increment numbers.
