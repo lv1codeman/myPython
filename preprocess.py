@@ -14,8 +14,23 @@ def get_preload_data(dataType):
         print("start Chrome")
 
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")  # Disable GPU acceleration
+        # chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--disable-gpu")  # Disable GPU
+        # Disable shared memory usage
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")  # Disable sandboxing
+        chrome_options.add_argument(
+            "--disable-extensions")  # Disable extensions
+        chrome_options.add_argument("--disable-logging")  # Disable logging
+        # Set log level to suppress logging
+        chrome_options.add_argument("--log-level=3")
+
+        # Prevent showing "DevTools listening on ws..."
+        chrome_options.add_argument("--remote-debugging-port=0")
+
+        chrome_options.add_experimental_option(
+            'excludeSwitches', ['enable-logging'])
 
         # Initialize Chrome driver with the specified options
         driver = webdriver.Chrome(options=chrome_options)
@@ -25,6 +40,7 @@ def get_preload_data(dataType):
 
         html = driver.page_source
         driver.close()  # 關閉瀏覽器
+        print("END Chrome")
         soup = BeautifulSoup(html, "html.parser")
         classeslist = soup.find(id="ddl_scj_cls_id")
         res = classeslist.select("option")
