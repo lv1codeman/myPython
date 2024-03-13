@@ -53,16 +53,21 @@ def close():
 def preloader(default=False):
     if default:
         # 設置學年度清單
-        for i in reversed(range(95, 113)):
-            window.cb_year.addItem(str(i))
+        # for i in reversed(range(95, 113)):
+        #     window.cb_year.addItem(str(i))
         window.cb_semester.addItems(["1", "2"])
         # 設置學期清單
         window.cb_crossclass.addItems(["", "限本系", "可跨班系", "限本班"])
         # 設置開課班級清單(讀取網頁帶入)
         global classes
-        classes = get_preload_data("classes")
-        for i in range(0, len(classes)):
-            window.cb_crsclass.addItem(classes[i][1])
+        res = get_preload_data("from_select_area")
+        class_dict = res["classes"]
+        for i in range(0, len(class_dict)):
+            window.cb_crsclass.addItem(class_dict[i][1])
+        # 設置學年度清單
+        year_list = res["years"]
+        for i in range(0, len(year_list)):
+            window.cb_year.addItem(str(year_list[i]))
 
     # 設定預設值
     window.cb_year.setCurrentIndex(0)
