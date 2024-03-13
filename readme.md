@@ -69,9 +69,14 @@ pyuic5 -x interface.ui -o interface.py
 ```
 pip install pyinstaller
 ```
-2. 執行封裝
+2. 執行封裝  
+-F 打包成一個.exe檔  
+-w 執行.exe時不顯示console  
+-n [filename].exe 命名.exe檔  
+-i="[filename].ico" 設置.exe檔的icon 
+--splash opening.png 設置程式開啟時的等候圖示
 ```
-pyinstaller -F main.py
+pyinstaller -F -w -n course_search.exe --splash opening.png main.py
 ```
 3. 產生資料夾build、dist，其中dist內即有.exe檔可執行
 > [!Note]
