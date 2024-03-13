@@ -17,15 +17,26 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 import re
 import csv
 import sys
+import logging
 
 
 def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass=""):
     # 開啟瀏覽器視窗(Chrome)
     # 方法一：執行前需開啟chromedriver.exe且與執行檔在同一個工作目錄
-    driver = webdriver.Chrome()
+    logging.getLogger('selenium').setLevel(logging.WARNING)
+
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--log-level=3")
+    chrome_options.add_experimental_option(
+        'excludeSwitches', ['enable-logging'])
+
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
 
     # 指定條件區的輸入

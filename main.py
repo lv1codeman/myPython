@@ -25,6 +25,9 @@ def pbtn_search_click():
         if classes[i][1] == window.cb_crsclass.currentText():
             crsclassID = classes[i][0]
 
+    # 更改鼠標為讀取圖示
+    QApplication.setOverrideCursor(Qt.WaitCursor)
+
     res = search_courses(
         window.cb_year.currentText(),
         window.cb_semester.currentText(),
@@ -33,6 +36,8 @@ def pbtn_search_click():
         window.cb_crossclass.currentText(),
     )
     if res == 0:
+        # 還原鼠標
+        QApplication.restoreOverrideCursor()
         msg.exec_()
 
 
