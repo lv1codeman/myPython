@@ -55,10 +55,10 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
         select_element.send_keys(crsid)
 
     # 指定修課班別<select>
-    select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
-    select = Select(select_element)
+    select_element2 = driver.find_element(By.ID, "ddl_scj_cls_id")
+    select2 = Select(select_element2)
     print(crsclassID)
-    select.select_by_value(crsclassID)
+    select2.select_by_value(crsclassID)
 
     # 點擊「查詢」按鈕
     button = driver.find_element(By.XPATH, "//input[@value='查詢']")
