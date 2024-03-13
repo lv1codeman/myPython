@@ -61,9 +61,9 @@ def preloader(default=False):
         # 設置開課班級清單(讀取網頁帶入)
         global classes
         res = get_preload_data("from_select_area")
-        class_dict = res["classes"]
-        for i in range(0, len(class_dict)):
-            window.cb_crsclass.addItem(class_dict[i][1])
+        classes = res["classes"]
+        for i in range(0, len(classes)):
+            window.cb_crsclass.addItem(classes[i][1])
         # 設置學年度清單
         year_list = res["years"]
         for i in range(0, len(year_list)):
