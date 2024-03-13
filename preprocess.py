@@ -7,30 +7,24 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
+import logging
 
 
 def get_preload_data(dataType):
     if dataType == "classes":
         print("start Chrome")
 
+        logging.getLogger('selenium').setLevel(logging.WARNING)
+
         chrome_options = Options()
-        # chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--headless=new")
-        chrome_options.add_argument("--disable-gpu")  # Disable GPU
-        # Disable shared memory usage
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--no-sandbox")  # Disable sandboxing
-        chrome_options.add_argument(
-            "--disable-extensions")  # Disable extensions
-        chrome_options.add_argument("--disable-logging")  # Disable logging
+        chrome_options.add_argument("--headless")
+        # Disable GPU acceleration
+        chrome_options.add_argument("--disable-gpu")
         # Set log level to suppress logging
         chrome_options.add_argument("--log-level=3")
 
-        # Prevent showing "DevTools listening on ws..."
-        chrome_options.add_argument("--remote-debugging-port=0")
-
-        chrome_options.add_experimental_option(
-            'excludeSwitches', ['enable-logging'])
+        # chrome_options.add_experimental_option(
+        #     'excludeSwitches', ['enable-logging'])
 
         # Initialize Chrome driver with the specified options
         driver = webdriver.Chrome(options=chrome_options)

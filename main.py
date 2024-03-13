@@ -9,8 +9,8 @@ import interface
 from search_courses import search_courses
 from preprocess import get_preload_data
 
-
-classes = {}
+# global classes
+# classes = {}
 
 
 class myMainWindow(QMainWindow, interface.Ui_MainWindow):
@@ -23,6 +23,7 @@ def pbtn_search_click():
     msg = QMessageBox()
     msg.setWindowTitle("執行結果")
     msg.setText("查詢完成，請檢視檔案。")
+    crsclassID = ""
 
     for i in range(0, len(classes)):
         if classes[i][1] == window.cb_crsclass.currentText():
@@ -57,9 +58,11 @@ def preloader(default=False):
         # 設置學期清單
         window.cb_crossclass.addItems(["", "限本系", "可跨班系", "限本班"])
         # 設置開課班級清單(讀取網頁帶入)
+        global classes
         classes = get_preload_data("classes")
         for i in range(0, len(classes)):
             window.cb_crsclass.addItem(classes[i][1])
+
     # 設定預設值
     window.cb_year.setCurrentIndex(0)
     window.cb_semester.setCurrentIndex(1)

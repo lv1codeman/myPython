@@ -175,6 +175,7 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
                             output[i][18] = result.get_text()
                         elif result.get_text() == "限本班":
                             deli = 1
+                            output[i][18] = result.get_text()
                     case "":
                         deli = 1
                         output[i][18] = result.get_text()
