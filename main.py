@@ -79,6 +79,7 @@ def preloader(default=False):
 
 
 if __name__ == "__main__":
+    # branch bug n1
     app = QtWidgets.QApplication(sys.argv)
     window = myMainWindow()
     window.setWindowIcon(QtGui.QIcon("sixer-small.jpg"))
