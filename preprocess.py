@@ -11,20 +11,38 @@ import logging
 
 
 def get_preload_data(dataType):
-    if dataType == "classes":
-        print("start Chrome")
-
-        logging.getLogger('selenium').setLevel(logging.WARNING)
+    if dataType == "years":
+        logging.getLogger("selenium").setLevel(logging.WARNING)
 
         chrome_options = Options()
         chrome_options.add_argument("--headless")
-        # Disable GPU acceleration
         chrome_options.add_argument("--disable-gpu")
-        # Set log level to suppress logging
         chrome_options.add_argument("--log-level=3")
+        chrome_options.add_experimental_option("excludeSwitches", ["disable-logging"])
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
 
-        # chrome_options.add_experimental_option(
-        #     'excludeSwitches', ['enable-logging'])
+        html = driver.page_source
+        driver.close()  # 關閉瀏覽器
+        print("END Chrome")
+        soup = BeautifulSoup(html, "html.parser")
+        yearlist = soup.find(id="ddl_yms_year")
+        res = yearlist.select("option")
+        yearlist_select = yearlist.select("option")
+        year_list = list()
+        for item in yearlist_select:
+            year_list.append(item.get("value"))
+        return year_list
+    elif dataType == "classes":
+        print("start Chrome")
+
+        logging.getLogger("selenium").setLevel(logging.WARNING)
+
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--log-level=3")
+        chrome_options.add_experimental_option("excludeSwitches", ["disable-logging"])
 
         # Initialize Chrome driver with the specified options
         driver = webdriver.Chrome(options=chrome_options)

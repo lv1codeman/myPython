@@ -22,11 +22,14 @@ def pbtn_search_click():
     msg = QMessageBox()
     msg.setWindowTitle("執行結果")
     msg.setText("查詢完成，請檢視檔案。")
-    crsclassID = ""
 
+    crsclassID = ""
     for i in range(0, len(classes)):
         if classes[i][1] == window.cb_crsclass.currentText():
             crsclassID = classes[i][0]
+
+    # 更改鼠標為讀取圖示
+    QApplication.setOverrideCursor(Qt.WaitCursor)
 
     res = search_courses(
         window.cb_year.currentText(),
@@ -36,6 +39,8 @@ def pbtn_search_click():
         window.cb_crossclass.currentText(),
     )
     if res == 0:
+        # 還原鼠標
+        QApplication.restoreOverrideCursor()
         msg.exec_()
 
 
@@ -51,11 +56,16 @@ def close():
 def preloader(default=False):
     if default:
         # 設置學年度清單
-        for i in reversed(range(95, 113)):
-            window.cb_year.addItem(str(i))
+        # for i in reversed(range(95, 113)):
+        #     window.cb_year.addItem(str(i))
         window.cb_semester.addItems(["1", "2"])
         # 設置學期清單
         window.cb_crossclass.addItems(["", "限本系", "可跨班系", "限本班"])
+
+        years = get_preload_data("years")
+        for i in years:
+            window.cb_year.addItem(i)
+
         # 設置開課班級清單(讀取網頁帶入)
         global classes
         classes = get_preload_data("classes")
