@@ -70,7 +70,6 @@ def preloader(default=False):
 
 
 if __name__ == "__main__":
-    # 01
     app = QtWidgets.QApplication(sys.argv)
     window = myMainWindow()
     window.setWindowIcon(QtGui.QIcon("sixer-small.jpg"))
