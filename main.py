@@ -8,17 +8,10 @@ import sys
 import interface
 from search_courses import search_courses
 from preprocess import get_preload_data
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.chrome.options import Options
-import logging
 
-# 02
+# TODO:
+# 未製作的查詢：開課名稱、老師姓名、星期、遠距課程、全英語課程
+# 未製作的非原生查詢：課程性質
 
 
 class myMainWindow(QMainWindow, interface.Ui_MainWindow):
@@ -64,17 +57,17 @@ def pbtn_search_click():
 
 def preloader(default=False):
     if default:
-
+        # 寫入下拉選單選項
         window.cb_semester.addItems(["1", "2"])
-        # 設置學期清單
         window.cb_crossclass.addItems(["", "限本系", "可跨班系", "限本班"])
 
-        # 設置學年度清單(讀取網頁帶入)
+        # 網頁讀取下拉選單選項
+        # 設置學年度清單
         res = get_preload_data("preload_select_area")
         for i in res["years"]:
             window.cb_year.addItem(i)
 
-        # 設置開課班級清單(讀取網頁帶入)
+        # 設置開課班級清單
         # 查詢按鈕按下時需要提供開課班級列表來比對使用者選的班級是哪個班級代碼
         # 所以要把classes寫成全域變數提供def pbtn_search_click()使用
         global classes
@@ -93,7 +86,6 @@ def preloader(default=False):
 
 
 if __name__ == "__main__":
-    # 00
     app = QtWidgets.QApplication(sys.argv)
     window = myMainWindow()
     window.setWindowIcon(QtGui.QIcon("sixer-small.jpg"))
