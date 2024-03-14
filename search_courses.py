@@ -44,8 +44,7 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
         select_element.send_keys(crsid)
 
     # 指定修課班別<select>
-    select_element = driver.find_element(By.ID, "ddl_scj_cls_id")
-    select = Select(select_element)
+    select = Select(driver.find_element(By.ID, "ddl_scj_cls_id"))
     select.select_by_value(crsclassID)
 
     # 點擊「查詢」按鈕
