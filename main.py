@@ -9,6 +9,9 @@ import interface
 from search_courses import search_courses
 from preprocess import get_preload_data
 
+# global classes
+# classes = {}
+
 
 class myMainWindow(QMainWindow, interface.Ui_MainWindow):
     def __init__(self):
@@ -70,7 +73,7 @@ def preloader(default=False):
 
 
 if __name__ == "__main__":
-    # revert from 01
+    # 00
     app = QtWidgets.QApplication(sys.argv)
     window = myMainWindow()
     window.setWindowIcon(QtGui.QIcon("sixer-small.jpg"))
