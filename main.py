@@ -55,8 +55,8 @@ def pbtn_search_click():
         msg.exec_()
 
 
-def preloader(default=False):
-    if default:
+def preloader(isFirstRun=False):
+    if isFirstRun:
         # 寫入下拉選單選項
         window.cb_semester.addItems(["1", "2"])
         window.cb_crossclass.addItems(["", "限本系", "可跨班系", "限本班"])

@@ -155,39 +155,30 @@ def search_courses(year=112, semester=2, crsid="", crsclassID="", crossclass="")
                     output[i][17] = "Y"
             elif result.get("data-th") == "可跨班：":
                 match crossclass:
+                    case "":
+                        deli = 1
+                        output[i][18] = result.get_text()
                     case "可跨班系":
                         if result.get_text() == "可跨班系":
                             deli = 1
                             output[i][18] = result.get_text()
-                        elif result.get_text() == "限本系":
-                            deli = 0
-                            output[i][18] = result.get_text()
-                        elif result.get_text() == "限本班":
+                        else:
                             deli = 0
                             output[i][18] = result.get_text()
                     case "限本系":
-                        if result.get_text() == "可跨班系":
-                            deli = 0
-                            output[i][18] = result.get_text()
-                        elif result.get_text() == "限本系":
+                        if result.get_text() == "限本系":
                             deli = 1
                             output[i][18] = result.get_text()
-                        elif result.get_text() == "限本班":
+                        else:
                             deli = 0
                             output[i][18] = result.get_text()
                     case "限本班":
-                        if result.get_text() == "可跨班系":
-                            deli = 0
-                            output[i][18] = result.get_text()
-                        elif result.get_text() == "限本系":
-                            deli = 0
-                            output[i][18] = result.get_text()
-                        elif result.get_text() == "限本班":
+                        if result.get_text() == "限本班":
                             deli = 1
                             output[i][18] = result.get_text()
-                    case "":
-                        deli = 1
-                        output[i][18] = result.get_text()
+                        else:
+                            deli = 0
+                            output[i][18] = result.get_text()
             elif result.get("data-th") == "備註：":
                 output[i][19] = result.get_text().strip()
                 if deli == 1:
