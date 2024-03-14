@@ -9,8 +9,7 @@ import interface
 from search_courses import search_courses
 from preprocess import get_preload_data
 
-# global classes
-# classes = {}
+# 01
 
 
 class myMainWindow(QMainWindow, interface.Ui_MainWindow):
