@@ -10,25 +10,43 @@ from selenium.webdriver.chrome.options import Options
 import logging
 
 
-def get_preload_data(dataType, soup):
-
-    if dataType == "years":
-        yearlist_select = soup.find(id="ddl_yms_year").select("option")
-        year_list = list()
-        for item in yearlist_select:
-            year_list.append(item.get("value"))
-        return year_list
-    elif dataType == "classes":
-        res = soup.find(id="ddl_scj_cls_id").select("option")
-
-        classes = np.array([[0, 0]])
-        for item in res:
-            classes = np.concatenate(
-                (classes, [[item.get("value"), item.get_text()]]), axis=0
+def get_preload_data(dataType):
+    match dataType:
+        case "preload_select_area":
+            res = {}
+            print("start Chrome")
+            logging.getLogger("selenium").setLevel(logging.WARNING)
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--log-level=3")
+            chrome_options.add_experimental_option(
+                "excludeSwitches", ["disable-logging"]
             )
-        classes = np.delete(classes, 0, 0)
+            driver = webdriver.Chrome(options=chrome_options)
+            driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
 
-        return classes
+            html = driver.page_source
+            driver.close()  # 關閉瀏覽器
+            print("END Chrome")
+            soup = BeautifulSoup(html, "html.parser")
+            yearlist_select = soup.find(id="ddl_yms_year").select("option")
+            year_list = list()
+            for item in yearlist_select:
+                year_list.append(item.get("value"))
+            res["years"] = year_list
+
+            class_list = soup.find(id="ddl_scj_cls_id").select("option")
+
+            classes = np.array([[0, 0]])
+            for item in class_list:
+                classes = np.concatenate(
+                    (classes, [[item.get("value"), item.get_text()]]), axis=0
+                )
+            classes = np.delete(classes, 0, 0)
+
+            res["classes"] = classes
+            return res
     # elif dataType == "courseType":
     #     crsType = {}
     #     data = list()

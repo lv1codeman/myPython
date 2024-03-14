@@ -64,47 +64,27 @@ def pbtn_search_click():
 
 def preloader(default=False):
     if default:
-        print("start Chrome")
-        logging.getLogger("selenium").setLevel(logging.WARNING)
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--log-level=3")
-        chrome_options.add_experimental_option("excludeSwitches", ["disable-logging"])
-
-        # Initialize Chrome driver with the specified options
-        driver = webdriver.Chrome(options=chrome_options)
-
-        # driver = webdriver.Chrome()
-        driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
-
-        html = driver.page_source
-        driver.close()  # 關閉瀏覽器
-        print("END Chrome")
-        soup = BeautifulSoup(html, "html.parser")
 
         window.cb_semester.addItems(["1", "2"])
         # 設置學期清單
         window.cb_crossclass.addItems(["", "限本系", "可跨班系", "限本班"])
 
-        # 設置學年度清單
-        # 自己寫入學年度
-        # years = list()
-        # for i in reversed(range(95, 113)):
-        #     years.append(str(i))
-        # 從網頁讀取學年度
-        years = get_preload_data("years", soup)
-        for i in years:
+        # 設置學年度清單(讀取網頁帶入)
+        res = get_preload_data("preload_select_area")
+        for i in res["years"]:
             window.cb_year.addItem(i)
 
         # 設置開課班級清單(讀取網頁帶入)
+        # 查詢按鈕按下時需要提供開課班級列表來比對使用者選的班級是哪個班級代碼
+        # 所以要把classes寫成全域變數提供def pbtn_search_click()使用
         global classes
-        classes = get_preload_data("classes", soup)
+        classes = res["classes"]
         for i in range(0, len(classes)):
             window.cb_crsclass.addItem(classes[i][1])
 
     # 設定預設值
-    window.cb_year.setCurrentIndex(0)
+    # TODO:學年度的預設值選第二項，以後要根據當前時間更改預設值
+    window.cb_year.setCurrentIndex(1)
     window.cb_semester.setCurrentIndex(1)
     window.cb_crossclass.setCurrentIndex(0)
     window.cb_crsclass.setCurrentIndex(0)
