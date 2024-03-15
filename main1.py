@@ -8,20 +8,7 @@ import sys
 import interface
 from search_courses import search_courses
 from preprocess import get_preload_data
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-import re
-import csv
-import sys
-from selenium.webdriver.chrome.options import Options
-import logging
-import numpy as np
-import time
+
 # TODO:
 # 未製作的查詢：開課名稱、老師姓名、星期、遠距課程、全英語課程
 # 未製作的非原生查詢：課程性質
@@ -103,7 +90,7 @@ def preloader(isFirstRun=False):
 
 
 def on_combobox_changed():
-    res = get_preload_data("get_classes_by_")
+    res = get_preload_data("preload_select_area")
     classes = res["classes"]
     # setattr(window.cb_crsclass, "allItems", lambda: [
     #         window.cb_crsclass.itemText(i) for i in range(window.cb_crsclass.count())])
@@ -113,31 +100,6 @@ def on_combobox_changed():
     print("on_combobox_changed 2 ", window.cb_crsclass.count())
     for i in range(0, len(classes)):
         window.cb_crsclass.addItem(classes[i][1])
-
-
-def getFromOB010():
-    options = Options()
-    driver = webdriver.Chrome(options=options)
-    driver.get("http://webapt.ncue.edu.tw/DEANV2/Other/ob010")
-    print("END Chrome")
-    selectyear = Select(driver.find_element(By.ID, "ddl_yms_year"))
-    selectyear.select_by_value('111')
-    time.sleep(1)
-    res = {}
-
-    html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
-    class_list = soup.find(id="ddl_scj_cls_id").select("option")
-    classes = np.array([[0, 0]])
-
-    for item in class_list:
-        classes = np.concatenate(
-            (classes, [[item.get("value"), item.get_text()]]), axis=0
-        )
-    classes = np.delete(classes, 0, 0)
-    res["classes"] = classes
-
-    return res["classes"]
 
 
 if __name__ == "__main__":
@@ -151,13 +113,8 @@ if __name__ == "__main__":
     window.pbtn_search.clicked.connect(pbtn_search_click)
     window.pbtn_reset.clicked.connect(pbtn_reset_click)
 
-    # preloader(True)
-    # window.cb_year.currentTextChanged.connect(on_combobox_changed)
-
-    rest = getFromOB010()
-    for i in range(0, len(rest)):
-        print(rest[i][1])  # 性別平權學分學程
-
+    preloader(True)
+    window.cb_year.currentTextChanged.connect(on_combobox_changed)
     try:
         import pyi_splash
 
